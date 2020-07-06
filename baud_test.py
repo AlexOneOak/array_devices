@@ -10,11 +10,12 @@ This is a crude script to play with PC baud rates while the load
 is set to a fixed baud rate.
 """
 
-load_addr = 1
+load_addr = 0
+comport = "COM4"
 
 # This should match load
 base_baud_rate = 9600
-serial_conn = serial.Serial('COM4', base_baud_rate, timeout=1)
+serial_conn = serial.Serial(comport, base_baud_rate, timeout=1)
 load = array3710.Load(load_addr, serial_conn)
 load.remote_control = True
 serial_conn.close()
@@ -23,10 +24,11 @@ serial_conn.close()
 # Set this to sufficient range to get possible valid connections
 min_rate = 3500
 max_rate = 20000
+
 print("Walking from {} to {} for {}".format(min_rate, max_rate, base_baud_rate))
-for baud_rate in xrange(min_rate, max_rate, 100):
+for baud_rate in range(min_rate, max_rate, 100):
     time.sleep(0.1)
-    serial_conn = serial.Serial('COM4', baud_rate, timeout=0.5)
+    serial_conn = serial.Serial(comport, baud_rate, timeout=0.5)
     try:
         load = array3710.Load(load_addr, serial_conn, print_errors=False)
     except IOError:
@@ -50,7 +52,7 @@ for baud_rate in xrange(min_rate, max_rate, 100):
         print("Baud_Rate: {} - Errors: {}".format(baud_rate, error_count))
     serial_conn.close()
 
-serial_conn = serial.Serial('COM4', base_baud_rate, timeout=1)
+serial_conn = serial.Serial(comport, base_baud_rate, timeout=1)
 load = array3710.Load(load_addr, serial_conn)
 load.remote_control = False
 serial_conn.close()
